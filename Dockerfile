@@ -11,15 +11,10 @@ WORKDIR /app
 RUN wget -O enscan.tar.gz https://github.com/wgpsec/ENScan_GO/releases/download/v1.0.2/enscan-v1.0.2-linux-amd64.tar.gz && \
     tar -xzvf enscan.tar.gz && \
     mv enscan-v1.0.2-linux-amd64 enscan && \
-    chmod +x enscan \
-
-CMD ["ls"]
-CMD ["cd ./app"]
-CMD ["ls"]
-
+    chmod +x enscan
 
 # 暴露API端口
 EXPOSE 8080
 
-# 启动API模式
-CMD ["./enscan", "--api"]
+# 组合命令到 CMD 中，按顺序执行
+CMD sh -c "ls -al && cd /app && ls && ./enscan --api"
