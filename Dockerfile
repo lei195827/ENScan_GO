@@ -1,8 +1,8 @@
-# 使用 x86_64 版本的基础镜像
-FROM alpine:latest
+# 使用 debian 基础镜像（带有 glibc）
+FROM debian:latest
 
-# 安装 wget、tar、ca-certificates 和 file
-RUN apk add --no-cache wget ca-certificates tar file
+# 安装 wget 和 tar
+RUN apt-get update && apt-get install -y wget tar && rm -rf /var/lib/apt/lists/*
 
 # 设置工作目录
 WORKDIR /app
@@ -11,11 +11,10 @@ WORKDIR /app
 RUN wget -O enscan.tar.gz https://github.com/wgpsec/ENScan_GO/releases/download/v1.0.2/enscan-v1.0.2-linux-amd64.tar.gz && \
     tar -xzvf enscan.tar.gz && \
     mv enscan-v1.0.2-linux-amd64 enscan && \
-    chmod +x enscan && \
-    file enscan
+    chmod +x enscan
 
 # 暴露API端口
 EXPOSE 8080
 
-# 组合命令到 CMD 中，按顺序执行
-CMD sh -c "ls -al && file enscan && ./enscan --api"
+# 启动API模式
+CMD ["./enscan", "--api"]
