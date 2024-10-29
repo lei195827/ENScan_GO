@@ -4,6 +4,7 @@ FROM golang:1.19 AS build-stage
 # 克隆 ENScan_GO 项目
 RUN git clone --depth 1 https://github.com/wgpsec/ENScan_GO.git
 
+# 设置工作目录到包含go.mod文件的路径
 WORKDIR /ENScan_GO
 
 # 设置默认构建参数
