@@ -16,5 +16,5 @@ RUN wget -O enscan.tar.gz https://github.com/wgpsec/ENScan_GO/releases/download/
 # 暴露API端口
 EXPOSE 8080
 
-# 启动API模式
-CMD ["./enscan", "--api"]
+# 启动前先生成配置文件，然后启动API模式
+CMD ./enscan -v && ./enscan --api
