@@ -66,7 +66,7 @@ func api(options *common.ENOptions) {
 		a.GET("/info", webInfo)
 		a.POST("/info", webInfo)
 	}
-	err := r.Run(":8080")
+	err := r.Run(":31000")
 	if err != nil {
 		gologger.Error().Msgf("API服务启动失败！")
 		gologger.Fatal().Msgf(err.Error())
