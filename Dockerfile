@@ -1,28 +1,19 @@
-FROM golang:1.19 AS build-stage
+# 使用基础镜像
+FROM alpine:latest 
 
-RUN git clone --depth 1 https://github.com/wgpsec/ENScan_GO.git
+# 安装wget和ca-certificates，确保可以下载文件
+RUN apk add --no-cache wget ca-certificates tar
 
-WORKDIR ENScan_GO
+# 设置工作目录
+WORKDIR /app
 
+# 下载并解压ENScan_GO的二进制文件
+RUN wget -O enscan.tar.gz https://github.com/wgpsec/ENScan_GO/releases/download/v1.0.2/enscan-v1.0.2-linux-arm64.tar.gz && \
+    tar -xzvf enscan.tar.gz && \
+    chmod +x enscan
 
-ENV GO111MODULE=on \
-    GOPROXY=https://goproxy.cn,direct
+# 暴露API端口
+EXPOSE 8080
 
-RUN CGO_ENABLED=0 go build -trimpath -ldflags=" \
--w -s \
--X 'github.com/wgpsec/ENScan/common.BuiltAt=`date +'%F %T %z'`' \
--X 'github.com/wgpsec/ENScan/common.GoVersion=`go version | sed 's/go version //'`' \
--X 'github.com/wgpsec/ENScan/common.GitAuthor=`git show -s --format='format:%aN <%ae>' HEAD`' \
--X 'github.com/wgpsec/ENScan/common.GitCommit=`git log --pretty=format:"%h" -1`' \
--X 'github.com/wgpsec/ENScan/common.GitTag=`git describe --abbrev=0 --tags`' \
-" \
--o /enscan .
-
-# Deploy the application binary into a lean image
-FROM scratch
-
-WORKDIR /
-
-COPY --from=build-stage /enscan /enscan
-
-ENTRYPOINT ["/enscan"]
+# 启动API模式
+CMD ["./enscan", "--api"]
